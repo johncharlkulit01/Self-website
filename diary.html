@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Diary</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .entry {
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+    .entry-actions {
+      margin-top: 5px;
+    }
+    .entry-actions button {
+      margin-right: 5px;
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .edit-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+    .delete-btn {
+      background-color: #f44336;
+      color: white;
+    }
+  </style>
+</head>
+<body class="main">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    
+    <h2>My Website</h2>
+    <a href="home.html">🏠 Home</a>
+    <a href="diary.html" class="active">📖 Diary</a>
+    <a href="schedule.html">📅 Schedule</a>
+    <a href="gallery.html">🖼️ Gallery</a>
+    <a href="problems.html">❓ Problems</a>
+    <a href="stories.html">📚 Stories</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <div class="card">
+      <h2>Write a New Diary Entry</h2>
+      <form id="diaryForm">
+        <input type="text" id="entryTitle" placeholder="Title" required>
+        <input type="date" id="entryDate" required>
+        <textarea id="entryContent" placeholder="Write your thoughts here..." required></textarea>
+        <button type="submit">Save Entry</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>My Diary Entries</h2>
+      <div id="diaryEntries"></div>
+    </div>
+  </div>
+
+  <script>
+const diaryForm = document.getElementById('diaryForm');
+const diaryEntries = document.getElementById('diaryEntries');
+const entryDate = document.getElementById('entryDate');
+
+// Auto set today's date
+const today = new Date().toISOString().split("T")[0];
+entryDate.value = today;
+
+let editMode = null; // track kung may entry na ine-edit
+let entries = JSON.parse(localStorage.getItem('diaryEntries')) || []; // load saved entries
+
+// Function to render entries
+function renderEntries() {
+  diaryEntries.innerHTML = '';
+  entries.forEach((entry, index) => {
+    const newEntry = document.createElement('div');
+    newEntry.classList.add('entry');
+    newEntry.innerHTML = `
+      <h3>${entry.title} <span style="font-size:0.8rem; color:#777;">(${entry.date})</span></h3>
+      <p>${entry.content}</p>
+      <div class="entry-actions">
+        <button class="edit-btn">📝 Edit</button>
+        <button class="delete-btn">🗑️ Delete</button>
+      </div>
+    `;
+
+    // Edit
+    newEntry.querySelector('.edit-btn').addEventListener('click', function() {
+      document.getElementById('entryTitle').value = entry.title;
+      document.getElementById('entryDate').value = entry.date;
+      document.getElementById('entryContent').value = entry.content;
+      editMode = index;
+    });
+
+    // Delete
+    newEntry.querySelector('.delete-btn').addEventListener('click', function() {
+      if(confirm("❗ Are you sure you want to delete this entry?")) {
+        entries.splice(index, 1);
+        saveEntries();
+        renderEntries();
+      }
+    });
+
+    diaryEntries.prepend(newEntry); // newest on top
+  });
+}
+
+// Save to localStorage
+function saveEntries() {
+  localStorage.setItem('diaryEntries', JSON.stringify(entries));
+}
+
+// Initial render
+renderEntries();
+
+// Handle form submit
+diaryForm.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const title = document.getElementById('entryTitle').value;
+  const date = document.getElementById('entryDate').value;
+  const content = document.getElementById('entryContent').value;
+
+  if(editMode !== null) {
+    entries[editMode] = {title, date, content};
+    editMode = null;
+    alert("✅ Diary entry updated successfully!");
+  } else {
+    entries.push({title, date, content});
+  }
+
+  saveEntries();
+  renderEntries();
+
+  // Reset form + auto set today's date
+  diaryForm.reset();
+  entryDate.value = today;
+});
+</script>
+
+</body>
+</html>

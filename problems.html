@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Problems</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="main">
+  <div class="sidebar">
+    <h2>My Website</h2>
+    <a href="home.html">🏠 Home</a>
+    <a href="diary.html">📖 Diary</a>
+    <a href="schedule.html">📅 Schedule</a>
+    <a href="gallery.html">🖼️ Gallery</a>
+    <a href="problems.html">❓ Problems</a>
+    <a href="stories.html">📚 Stories</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <div class="content">
+    <div class="card">
+      <h2>Add New Problem</h2>
+      <form id="problemForm">
+        <input type="text" id="problemTitle" placeholder="Problem Title" required>
+        <textarea id="problemDesc" placeholder="Describe the problem..." rows="4" required></textarea>
+        <button type="submit">Add Problem</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>My Problems</h2>
+      <div id="problemList">
+        <div class="problem">
+          
+        </div>
+
+        <div class="problem">
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const problemForm = document.getElementById('problemForm');
+  const problemList = document.getElementById('problemList');
+
+  // ✅ Load saved problems when page loads
+  document.addEventListener('DOMContentLoaded', loadProblems);
+
+  // ✅ Add new problem
+  problemForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const title = document.getElementById('problemTitle').value.trim();
+    const desc = document.getElementById('problemDesc').value.trim();
+
+    if (title === "" || desc === "") return;
+
+    const problem = {
+      id: Date.now(),
+      title,
+      desc,
+      status: "not-started"
+    };
+
+    addProblemToDOM(problem);
+    saveProblem(problem);
+    problemForm.reset();
+  });
+
+  // ✅ Add to DOM
+  function addProblemToDOM(problem) {
+    const newProblem = document.createElement('div');
+    newProblem.classList.add('problem');
+    newProblem.setAttribute('data-id', problem.id);
+
+    newProblem.innerHTML = `
+      <h3>${problem.title}</h3>
+      <p>${problem.desc}</p>
+      <label>Status: </label>
+      <select class="status">
+        <option value="not-started" ${problem.status === "not-started" ? "selected" : ""}>❌ Not Started</option>
+        <option value="ongoing" ${problem.status === "ongoing" ? "selected" : ""}>🔄 Ongoing</option>
+        <option value="solved" ${problem.status === "solved" ? "selected" : ""}>✅ Solved</option>
+      </select>
+      <button class="deleteBtn">🗑️ Delete</button>
+    `;
+
+    // Change status event
+    newProblem.querySelector('.status').addEventListener('change', (e) => {
+      updateStatus(problem.id, e.target.value);
+    });
+
+    // Delete event
+    newProblem.querySelector('.deleteBtn').addEventListener('click', () => {
+      deleteProblem(problem.id);
+    });
+
+    problemList.prepend(newProblem);
+  }
+
+  // ✅ Save to localStorage
+  function saveProblem(problem) {
+    const problems = JSON.parse(localStorage.getItem('problems') || "[]");
+    problems.push(problem);
+    localStorage.setItem('problems', JSON.stringify(problems));
+  }
+
+  // ✅ Load from localStorage
+  function loadProblems() {
+    const problems = JSON.parse(localStorage.getItem('problems') || "[]");
+    problemList.innerHTML = "";
+    problems.forEach(p => addProblemToDOM(p));
+  }
+
+  // ✅ Update status in localStorage
+  function updateStatus(id, newStatus) {
+    const problems = JSON.parse(localStorage.getItem('problems') || "[]");
+    const updated = problems.map(p => p.id === id ? {...p, status: newStatus} : p);
+    localStorage.setItem('problems', JSON.stringify(updated));
+  }
+
+  // ✅ Delete problem
+  function deleteProblem(id) {
+    const problems = JSON.parse(localStorage.getItem('problems') || "[]");
+    const updated = problems.filter(p => p.id !== id);
+    localStorage.setItem('problems', JSON.stringify(updated));
+    document.querySelector(`[data-id="${id}"]`).remove();
+  }
+</script>
+
+</body>
+</html>

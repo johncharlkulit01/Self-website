@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Schedule</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f8f8; margin:0; }
+    .week-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px; }
+    .day-card { background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+    .day-card h3 { margin-bottom: 10px; color: #333; }
+    .day-card ul { list-style: none; padding: 0; }
+    .day-card li { padding: 6px 10px; margin: 4px 0; background: #f5f5f5; border-radius: 6px; }
+    #todayBox { position: fixed; top: 10px; right: 10px; background: #333; color: #fff; padding: 8px 15px; border-radius: 8px; font-weight: bold; box-shadow: 0 2px 6px rgba(0,0,0,0.3); z-index: 1000; }
+    .delete-day-btn { margin-top: 10px; padding: 5px 10px; background: #e74c3c; border: none; color: white; border-radius: 6px; cursor: pointer; }
+
+    /* Notification Box */
+    .notif { position: fixed; top: 80px; right: 20px; background-color: #333; color: #fff; padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); font-weight: bold; opacity: 0; pointer-events: none; transition: opacity 0.5s ease, transform 0.3s ease; z-index: 1001; }
+    .notif.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .notif.today { background-color: #e74c3c; }      /* red for today */
+    .notif.tomorrow { background-color: #f39c12; }   /* orange for tomorrow */
+
+    #todayTasksList li {
+    padding: 6px 10px;
+    margin: 4px 0;
+    background: #e0f7fa;  /* light blue para sa Today */
+    border-radius: 6px;
+  }
+  </style>
+</head>
+<body>
+  <div id="todayBox"></div>
+
+  <div class="sidebar">
+    <h2>My Website</h2>
+    <a href="home.html">🏠 Home</a>
+    <a href="diary.html">📖 Diary</a>
+    <a href="schedule.html" class="active">📅 Schedule</a>
+    <a href="gallery.html">🖼️ Gallery</a>
+    <a href="problems.html">❓ Problems</a>
+    <a href="stories.html">📚 Stories</a>
+    <a href="index.html">🚪 Logout</a>
+  </div>
+
+  <div class="content">
+    <div class="card" id="todayCard">
+  <h2>🔔 Today's Schedule</h2>
+  <button id="viewTodayBtn">Hide / Show Today’s Schedule</button>
+  <ul id="todayTasksList"></ul>
+</div>
+    <div class="card">
+      <h2>Add New Task</h2>
+      <form id="taskForm">
+        <input type="text" id="taskTitle" placeholder="Task Title" required>
+        <input type="date" id="taskDate" required>
+        <button type="submit">Add Task</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Upcoming Schedule</h2>
+      <ul id="taskList"></ul>
+    </div>
+
+    <div class="card">
+      <h2>Add Weekly Class</h2>
+      <form id="weeklyForm">
+        <input type="text" id="className" placeholder="Class / Subject" required>
+        <input type="text" id="classTime" placeholder="Time (e.g., 6:00am - 7:30am)" required>
+        <select id="classDay" required>
+          <option value="">Select Day</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+          <option value="Sunday">Sunday</option>
+        </select>
+        <button type="submit">Add Class</button>
+      </form>
+
+      <div style="margin-top:10px;">
+        <select id="deleteDaySelect">
+          <option value="">Select Day to Delete</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+          <option value="Sunday">Sunday</option>
+        </select>
+        <button id="deleteDayBtn" class="delete-day-btn">Delete Selected Day</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📌 Weekly Schedule</h2>
+      <div class="week-grid" id="weekSchedule"></div>
+    </div>
+  </div>
+
+  <div id="notifBox" class="notif"></div>
+
+  <script>
+// --- Variables ---
+const taskForm = document.getElementById('taskForm');
+const taskList = document.getElementById('taskList');
+const taskDate = document.getElementById('taskDate');
+const todayBox = document.getElementById("todayBox");
+const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+todayBox.textContent = `Today is ${days[new Date().getDay()]}`;
+
+const today = new Date().toISOString().split("T")[0];
+taskDate.value = today;
+
+// --- Persisted Tasks ---
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function renderTasks() {
+  taskList.innerHTML = "";
+  tasks.forEach((task,index)=>{
+    const li = document.createElement("li");
+    li.innerHTML = `<span>📌 ${task.title} - ${task.date}</span> <button class="delete-btn">×</button>`;
+    li.querySelector(".delete-btn").addEventListener("click", ()=>{
+      tasks.splice(index,1);
+      localStorage.setItem("tasks",JSON.stringify(tasks));
+      renderTasks();
+    });
+    taskList.appendChild(li);
+  });
+}
+
+taskForm.addEventListener('submit',(e)=>{
+  e.preventDefault();
+  const title = document.getElementById('taskTitle').value;
+  const date = taskDate.value;
+  tasks.push({title,date});
+  localStorage.setItem("tasks",JSON.stringify(tasks));
+  renderTasks();
+  taskForm.reset();
+  taskDate.value = today;
+});
+
+renderTasks();
+
+// --- Weekly Schedule ---
+const weeklyForm = document.getElementById("weeklyForm");
+const weekSchedule = document.getElementById("weekSchedule");
+const deleteDaySelect = document.getElementById("deleteDaySelect");
+const deleteDayBtn = document.getElementById("deleteDayBtn");
+
+let scheduleData = JSON.parse(localStorage.getItem("weeklySchedule")) || {
+  Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: []
+};
+
+function renderSchedule(){
+  weekSchedule.innerHTML="";
+  for(let day in scheduleData){
+    const dayCard = document.createElement("div");
+    dayCard.classList.add("day-card");
+    const items = scheduleData[day].length>0
+      ? scheduleData[day].map(c=>`<li>${c.time} → ${c.name}</li>`).join("")
+      : "<li>No Class</li>";
+    dayCard.innerHTML=`<h3>${day}</h3><ul>${items}</ul>`;
+    weekSchedule.appendChild(dayCard);
+  }
+}
+
+weeklyForm.addEventListener("submit",e=>{
+  e.preventDefault();
+  const name=document.getElementById("className").value;
+  const time=document.getElementById("classTime").value;
+  const day=document.getElementById("classDay").value;
+  if(day && name && time){
+    scheduleData[day].push({name,time});
+    localStorage.setItem("weeklySchedule",JSON.stringify(scheduleData));
+    renderSchedule();
+  }
+  weeklyForm.reset();
+});
+
+deleteDayBtn.addEventListener("click",()=>{
+  const day=deleteDaySelect.value;
+  if(day && scheduleData[day]){
+    scheduleData[day]=[];
+    localStorage.setItem("weeklySchedule",JSON.stringify(scheduleData));
+    renderSchedule();
+  }
+});
+
+renderSchedule();
+
+// --- Today’s Schedule ---
+const viewTodayBtn = document.getElementById("viewTodayBtn");
+const todayTasksList = document.getElementById("todayTasksList");
+const todayCard = document.getElementById("todayCard");
+let isTodayVisible = true;
+
+function showTodaysSchedule() {
+  todayTasksList.innerHTML = "";
+  const todayIndex = new Date().getDay();
+  const todayName = days[todayIndex];
+
+  // Tasks due today
+  const todaysTasks = tasks.filter(t => t.date === today);
+  todaysTasks.forEach(t=>{
+    const li = document.createElement("li");
+    li.textContent = `📌 ${t.title} - ${t.date}`;
+    todayTasksList.appendChild(li);
+  });
+
+  // Weekly classes today
+  const todaysClasses = scheduleData[todayName];
+  todaysClasses.forEach(c=>{
+    const li = document.createElement("li");
+    li.textContent = `📝 ${c.time} → ${c.name}`;
+    todayTasksList.appendChild(li);
+  });
+
+  if(todaysTasks.length === 0 && todaysClasses.length === 0){
+    const li = document.createElement("li");
+    li.textContent = "No schedule today!";
+    todayTasksList.appendChild(li);
+  }
+}
+
+// Initial display
+showTodaysSchedule();
+
+// Toggle button
+viewTodayBtn.addEventListener("click", () => {
+  if(isTodayVisible){
+    todayTasksList.style.display = "none";
+    isTodayVisible = false;
+  } else {
+    todayTasksList.style.display = "block";
+    isTodayVisible = true;
+  }
+});
+
+</script>
+
+</body>
+</html>

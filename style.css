@@ -1,0 +1,493 @@
+/* ====== Global ====== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  color: #111;
+  background: #f8f8f8;
+  line-height: 1.6;
+}
+
+/* ====== Login Page ====== */
+.login-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #000 0%, #333 100%);
+}
+
+.login-container {
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  padding: 2rem;
+  border-radius: 16px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  color: white;
+}
+
+.login-container h2 {
+  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+.login-container input,
+.login-container select {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  width: 100%;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+}
+
+.login-container button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+  color: #000;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-container button:hover {
+  background: #ddd;
+}
+
+#error-msg {
+  display: none;
+  color: #ff6b6b;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+/* ====== Main Layout (Home, Diary, etc.) ====== */
+body.main {
+  display: flex;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+.sidebar {
+  width: 220px;
+  background: #111;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.sidebar h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+  padding: 12px;
+  margin: 4px 0;
+  border-radius: 8px;
+  transition: background 0.3s;
+  display: block;
+}
+
+.sidebar a:hover {
+  background: #333;
+}
+
+.content {
+  margin-left: 240px;
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  margin-bottom: 1.5rem;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Headings */
+.card h2 {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  color: #111;
+}
+
+/* Forms inside cards */
+.card input,
+.card textarea,
+.card select,
+.card button {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 0.95rem;
+}
+
+.card textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.card button {
+  background: #111;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.card button:hover {
+  background: #444;
+}
+
+/* Gallery Grid */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.gallery-grid img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+  transition: transform 0.3s;
+}
+
+.gallery-grid img:hover {
+  transform: scale(1.05);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(10px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.gallery-item {
+  background: #fff;
+  color: #000;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+}
+
+.gallery-item:hover {
+  transform: scale(1.03);
+}
+
+.gallery-item img,
+.gallery-item video {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 5px;
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.gallery-item {
+  background: #fff;
+  color: #000;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gallery-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.gallery-item img,
+.gallery-item video {
+  width: 100%;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+/* Gallery Grid */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.gallery-item {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.gallery-item img,
+.gallery-item video {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+/* Type Indicator */
+.media-type {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 3px 8px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 5px;
+  background: #000;
+  color: #fff;
+}
+
+/* === Personal Login Theme === */
+/* ====== Personal Login Theme (Black & White) ===== */
+/* ====== Clean Dark Mode Login ====== */
+.personal-login-body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  background: #121212;
+  transition: background 0.5s, color 0.5s;
+}
+
+.personal-login-body.light-mode {
+  background: #fff;
+  color: #222;
+}
+
+.login-box {
+  width: 330px;
+  padding: 2rem;
+  border-radius: 18px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.4s ease;
+}
+
+.personal-login-body.light-mode .login-box {
+  background: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-box h2 {
+  font-size: 1.6rem;
+  margin-bottom: 0.5rem;
+  color: #fff;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: #bbb;
+  margin-bottom: 1.5rem;
+}
+
+.personal-login-body.light-mode .subtitle {
+  color: #444;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.login-box input:focus {
+  background: #222;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+  border-color: #6dd5ed;
+}
+
+.personal-login-body.light-mode .login-box input {
+  background: #f5f5f5;
+  color: #111;
+  border: 1px solid #ccc;
+}
+
+/* Password toggle */
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+  color: #6dd5ed;
+  transition: 0.3s;
+}
+
+.toggle-password:hover {
+  color: #fff;
+}
+
+/* Login Button */
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #1f1f1f;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+.login-box button:hover {
+  background: #333;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.personal-login-body.light-mode .login-box button {
+  background: #000;
+  color: #fff;
+}
+
+.personal-login-body.light-mode .login-box button:hover {
+  background: #222;
+}
+
+/* Error message */
+#error-msg {
+  display: none;
+  color: #ff6b6b;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+/* Mode toggle */
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.switch {
+  width: 50px;
+  height: 24px;
+  background: #1a1a1a;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.switch::after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background: #6dd5ed;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  transition: all 0.3s ease;
+}
+
+.switch.active {
+  background: #6dd5ed;
+}
+
+.switch.active::after {
+  left: 27px;
+  background: #fff;
+}
+
+#mode-text {
+  font-size: 0.9rem;
+  color: #6dd5ed;
+  transition: 0.3s;
+}
+
+.personal-login-body.light-mode #mode-text {
+  color: #222;
+}
+
+/* Default Dark Mode */
+.login-box h2,
+.login-box .subtitle {
+  color: #fff; /* white sa dark mode */
+  transition: color 0.3s ease; /* smooth transition */
+}
+
+/* Light Mode */
+body.light-mode .login-box h2,
+body.light-mode .login-box .subtitle {
+  color: #000; /* black sa light mode */
+}
+

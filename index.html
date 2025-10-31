@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome JC 👋</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="personal-login-body">
+
+  <div class="login-box">
+    <h2>Welcome JC 👋</h2>
+    <p class="subtitle">Log in to continue</p>
+
+    <input type="text" id="username" placeholder="Username">
+    <div class="password-wrapper">
+      <input type="password" id="password" placeholder="Password">
+      <span class="toggle-password" onclick="togglePassword()">👁</span>
+    </div>
+
+    <button onclick="login()">Login</button>
+    <p id="error-msg">Invalid login. Try again.</p>
+
+    <!-- Switch button -->
+    <div class="toggle-switch">
+      <div id="mode-switch" class="switch"></div>
+      <span id="mode-text">Dark Mode</span>
+    </div>
+  </div>
+
+  <script>
+    const body = document.body;
+    const modeSwitch = document.getElementById("mode-switch");
+    const modeText = document.getElementById("mode-text");
+
+    modeSwitch.addEventListener("click", () => {
+      body.classList.toggle("light-mode");
+      modeSwitch.classList.toggle("active");
+      modeText.textContent = body.classList.contains("light-mode")
+        ? "Light Mode"
+        : "Dark Mode";
+    });
+
+    function togglePassword() {
+      const pass = document.getElementById("password");
+      pass.type = pass.type === "password" ? "text" : "password";
+    }
+
+    function login() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const errorMsg = document.getElementById("error-msg");
+
+      const correctUser = "ubanijohncharl@gmail.com";
+      const correctPass = "kapagodjcha";
+
+      if (username === correctUser && password === correctPass) {
+        errorMsg.style.display = "none";
+        alert("Welcome back, JC! 🎉");
+        window.location.href = "home.html";
+      } else {
+        errorMsg.style.display = "block";
+      }
+    }
+  </script>
+
+</body>
+</html>
