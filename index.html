@@ -11,14 +11,14 @@
     <h2>Welcome JC</h2>
     <p class="subtitle">Log in to continue</p>
 
-    <input type="text" id="username" placeholder="Username">
+    <input type="email" id="username" placeholder="Email">
     <div class="password-wrapper">
       <input type="password" id="password" placeholder="Password">
       <span class="toggle-password" onclick="togglePassword()">👁</span>
     </div>
 
-    <button onclick="login()">Login</button>
-    <p id="error-msg">Invalid login. Try again.</p>
+    <button id="loginBtn">Login</button>
+    <p id="error-msg" style="display:none; color:red;">Invalid login. Try again.</p>
 
     <!-- Switch button -->
     <div class="toggle-switch">
@@ -28,6 +28,7 @@
   </div>
 
   <script>
+    // 🌗 DARK/LIGHT MODE
     const body = document.body;
     const modeSwitch = document.getElementById("mode-switch");
     const modeText = document.getElementById("mode-text");
@@ -40,27 +41,51 @@
         : "Dark Mode";
     });
 
+    // 👁 TOGGLE PASSWORD VISIBILITY
     function togglePassword() {
       const pass = document.getElementById("password");
       pass.type = pass.type === "password" ? "text" : "password";
     }
+  </script>
 
-    function login() {
-      const username = document.getElementById("username").value.trim();
+  <!-- 🔥 FIREBASE LOGIN SYSTEM -->
+  <script type="module">
+    // Import Firebase libraries (latest)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } 
+      from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    // ✅ Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyC-7jYBN3gPNR_Dj8y8DrLKVoSUc3EQPGQ",
+      authDomain: "my-website-46ec4.firebaseapp.com",
+      projectId: "my-website-46ec4",
+      storageBucket: "my-website-46ec4.firebasestorage.app",
+      messagingSenderId: "94693103161",
+      appId: "1:94693103161:web:2aec407878d62cb8a2dfe8",
+      measurementId: "G-2ZGXQKYDH9"
+    };
+
+    // 🔧 Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // 🧩 LOGIN FUNCTION
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("username").value.trim();
       const password = document.getElementById("password").value.trim();
       const errorMsg = document.getElementById("error-msg");
 
-      const correctUser = "ubanijohncharl@gmail.com";
-      const correctPass = "kapagodjcha";
-
-      if (username === correctUser && password === correctPass) {
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
         errorMsg.style.display = "none";
         alert("Welcome back, JC! 🎉");
         window.location.href = "home.html";
-      } else {
+      } catch (error) {
+        console.error("Login failed:", error.message);
         errorMsg.style.display = "block";
       }
-    }
+    });
   </script>
 
 </body>
