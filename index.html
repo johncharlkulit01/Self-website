@@ -48,12 +48,14 @@
     }
   </script>
 
-  <!-- 🔥 FIREBASE LOGIN SYSTEM -->
+  <!-- 🔥 FIREBASE LOGIN + DATABASE SYSTEM -->
   <script type="module">
     // Import Firebase libraries (latest)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } 
       from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getDatabase, ref, push, set } 
+      from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
     // ✅ Your Firebase configuration
     const firebaseConfig = {
@@ -63,12 +65,14 @@
       storageBucket: "my-website-46ec4.firebasestorage.app",
       messagingSenderId: "94693103161",
       appId: "1:94693103161:web:2aec407878d62cb8a2dfe8",
-      measurementId: "G-2ZGXQKYDH9"
+      measurementId: "G-2ZGXQKYDH9",
+      databaseURL: "https://my-website-46ec4-default-rtdb.firebaseio.com/"
     };
 
     // 🔧 Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getDatabase(app);
 
     // 🧩 LOGIN FUNCTION
     document.getElementById("loginBtn").addEventListener("click", async () => {
@@ -77,10 +81,21 @@
       const errorMsg = document.getElementById("error-msg");
 
       try {
-        await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // ✅ Save login event to Realtime Database
+        const loginRef = ref(db, "logins");
+        const newLogin = push(loginRef);
+        await set(newLogin, {
+          email: user.email,
+          time: new Date().toLocaleString()
+        });
+
         errorMsg.style.display = "none";
         alert("Welcome back, JC! 🎉");
         window.location.href = "home.html";
+
       } catch (error) {
         console.error("Login failed:", error.message);
         errorMsg.style.display = "block";
